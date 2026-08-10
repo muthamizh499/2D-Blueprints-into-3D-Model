@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Blueprint to 3D Model</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>2D Blueprint &rarr; 3D Model</h1>
+            <p>Convert architectural floor plans into interactive 3D models</p>
+        </div>
+        <nav>
+            <button class="nav-btn active" data-target="home">Home</button>
+            <button class="nav-btn" data-target="blueprint">Blueprint</button>
+            <button class="nav-btn" data-target="3d-model">3D Model</button>
+            <button class="nav-btn" data-target="about">About</button>
+        </nav>
+    </header>
+
+    <main id="main-container">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="card home-card">
+                <h2>Upload Blueprint</h2>
+                <div class="upload-area" id="upload-area">
+                    <p>Drag and drop image here or click to select</p>
+                    <input type="file" id="upload-input" accept="image/png, image/jpeg, image/jpg" hidden>
+                </div>
+                <div id="file-info" style="display: none;">
+                    <p><strong>File:</strong> <span id="file-name"></span></p>
+                    <p><strong>Dimensions:</strong> <span id="file-dimensions"></span></p>
+                    <img id="image-preview" src="" alt="Preview">
+                </div>
+                <div class="buttons-row">
+                    <button id="btn-upload" class="primary-btn">Upload Blueprint</button>
+                    <button id="btn-sample-1" class="secondary-btn">Sample 1: House</button>
+                    <button id="btn-sample-2" class="secondary-btn">Sample 2: Office</button>
+                    <button id="btn-clear-home" class="outline-btn">Clear</button>
+                </div>
+                <div id="detection-result" class="alert-box" style="display: none;">
+                    <h3>Basic Blueprint Detection</h3>
+                    <p id="detection-stats"></p>
+                    <p class="detection-note">If automatic detection fails, please use the manual editor.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section (Embedded in Main or Modal) -->
+        <section id="about" class="section">
+            <div class="card about-card">
+                <h2>Project Title</h2>
+                <p class="subtitle">Conversion of 2D Blueprints into 3D Model</p>
+                
+                <div class="about-grid">
+                    <div>
+                        <h3>Problem</h3>
+                        <p>2D architectural blueprints can be difficult for non-technical users to visualize.</p>
+                        
+                        <h3>Solution</h3>
+                        <p>The proposed system converts a 2D floor plan into an interactive 3D representation using browser-based technologies.</p>
+                    </div>
+                    <div>
+                        <h3>Technologies</h3>
+                        <ul>
+                            <li>HTML5</li>
+                            <li>CSS3</li>
+                            <li>Vanilla JavaScript</li>
+                            <li>HTML Canvas API</li>
+                            <li>Custom JavaScript 3D projection</li>
+                        </ul>
+                        
+                        <h3>Applications</h3>
+                        <ul>
+                            <li>Architecture & Interior design</li>
+                            <li>Construction planning</li>
+                            <li>Real-estate visualization</li>
+                            <li>Educational purposes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Split View for Editor & 3D -->
+        <section id="workspace" class="section split-mode">
+            
+            <div class="view-modes-bar">
+                <button id="mode-2d" class="mode-btn">2D VIEW</button>
+                <button id="mode-3d" class="mode-btn">3D VIEW</button>
+                <button id="mode-split" class="mode-btn active">SPLIT VIEW</button>
+            </div>
+
+            <div class="workspace-container">
+                
+                <!-- 2D Blueprint Panel -->
+                <div id="panel-2d" class="panel">
+                    <div class="panel-header">
+                        <h2>2D Blueprint Editor</h2>
+                        <div class="controls">
+                            <button id="btn-2d-zoom-in" title="Zoom In">+</button>
+                            <button id="btn-2d-zoom-out" title="Zoom Out">-</button>
+                            <button id="btn-2d-reset">Reset</button>
+                            <button id="btn-2d-fit">Fit</button>
+                        </div>
+                    </div>
+                    
+                    <div class="toolbar">
+                        <button class="tool-btn active" data-tool="select">Select</button>
+                        <button class="tool-btn" data-tool="wall">Add Wall</button>
+                        <button class="tool-btn" data-tool="door">Add Door</button>
+                        <button class="tool-btn" data-tool="window">Add Window</button>
+                        <button class="tool-btn" data-tool="room">Add Room</button>
+                        <button id="btn-delete" class="tool-btn danger">Delete</button>
+                        <button id="btn-clear-canvas" class="tool-btn danger">Clear</button>
+                    </div>
+
+                    <div class="canvas-wrapper" id="canvas-wrapper-2d">
+                        <canvas id="canvas-2d"></canvas>
+                    </div>
+                    
+                    <div class="settings-grid">
+                        <div class="settings-block">
+                            <label>Wall Height
+                                <input type="text" id="setting-wall-height" value="3.0 m">
+                            </label>
+                        </div>
+                        <div class="settings-block">
+                            <label>Wall Thickness
+                                <input type="text" id="setting-wall-thickness" value="0.2 m">
+                            </label>
+                        </div>
+                        <div class="settings-block">
+                            <label>Floor Thickness
+                                <input type="text" id="setting-floor-thickness" value="0.15 m">
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button id="btn-generate-3d" class="generate-btn">GENERATE 3D MODEL</button>
+                </div>
+
+                <!-- 3D Model Panel -->
+                <div id="panel-3d" class="panel">
+                    <div class="panel-header">
+                        <h2>3D Model Viewer</h2>
+                        <div class="controls">
+                            <button id="btn-view-top">Top</button>
+                            <button id="btn-view-front">Front</button>
+                            <button id="btn-view-side">Side</button>
+                            <button id="btn-3d-reset">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="canvas-wrapper" id="canvas-wrapper-3d">
+                        <canvas id="canvas-3d"></canvas>
+                        <div class="viewer-hint">Drag to rotate | Scroll to zoom</div>
+                    </div>
+                    
+                    <div class="info-export-grid">
+                        <div class="model-stats">
+                            <h3>Model Statistics</h3>
+                            <ul id="stats-list">
+                                <li>Walls: <span id="stat-walls">0</span></li>
+                                <li>Rooms: <span id="stat-rooms">0</span></li>
+                                <li>Doors: <span id="stat-doors">0</span></li>
+                                <li>Windows: <span id="stat-windows">0</span></li>
+                                <li>Wall Height: <span id="stat-height">3.0 m</span></li>
+                                <li>Wall Thickness: <span id="stat-thickness">0.2 m</span></li>
+                                <li>Est. Area: <span id="stat-area">0 m²</span></li>
+                            </ul>
+                        </div>
+                        <div class="export-actions">
+                            <h3>Export Options</h3>
+                            <button id="btn-export-blueprint" class="outline-btn">Export Blueprint (PNG)</button>
+                            <button id="btn-export-screenshot" class="outline-btn">Export 3D (PNG)</button>
+                            <button id="btn-export-data" class="outline-btn">Export Model Data (JSON)</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
